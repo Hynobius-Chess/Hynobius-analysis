@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<head>
+    <link rel="stylesheet" href="lib/chessboardjs-1.0.0/css/chessboard-1.0.0.css">
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="lib/chessboardjs-1.0.0/js/chessboard-1.0.0.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
+
+    <!-- 你的 JS -->
+    <script src="main.js" defer></script>
+
+</head>
+
+<body>
+
+    <h1>Hynobius Chess Analysis</h1>
+
+    <div class="container">
+
+        <!-- left: chess board -->
+        <div id="board" style="width: 400px"></div>
+
+        <!-- right: control panel -->
+        <div class="panel">
+
+         <textarea id="pgnInput" placeholder="貼上 PGN"></textarea>
+
+        <div class="buttons">
+            <button onclick="loadPGN()">載入 PGN</button>
+            <button onclick="prevMove()">◀</button>
+            <button onclick="nextMove()">▶</button>
+            <button onclick="analyze()">分析局面</button>
+        </div>
+
+        <div id="moves"></div>
+
+        <hr>
+
+        <div class="analysis">
+            <p><b>FEN:</b> <span id="fen"></span></p>
+            <p><b>Score:</b> <span id="score">--</span></p>
+            <p><b>Best Move:</b> <span id="bestmove">--</span></p>
+            <p><b>PV:</b> <span id="pv">--</span></p>
+        </div>
+
+        </div>
+    </div>
+
+</body>
+</html>
