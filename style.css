@@ -1,11 +1,41 @@
+:root {
+  --light-square: #eeeeee;
+  --dark-square: #c6c6c6;
+
+  --body-bg: #222;
+  --accent: #ffffff;
+}
+
 body {
-    font-family: Arial, sans-serif;
+    font-family: consolas;
     padding: 20px;
+    background-color: var(--body-bg);
+    justify-content: center;
+    align-items: center;
+}
+
+.center {
+    justify-content: center;
+    align-items: center;
 }
 
 .container {
     display: flex;
     gap: 20px;
+}
+
+.title {
+    color: var(--accent);
+    text-align: center;
+    font-weight: bold;
+}
+
+#board-wrap {
+    width: 40%;
+}
+
+#board {
+    width: 100%;
 }
 
 .panel {
