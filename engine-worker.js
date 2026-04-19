@@ -39,6 +39,8 @@ self.onmessage = function (event) {
 
         const result = JSON.parse(jsonStr);
 
+        console.log(result);
+
         postMessage({
             version: data.version,
             result

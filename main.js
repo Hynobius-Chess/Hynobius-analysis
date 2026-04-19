@@ -109,6 +109,7 @@ engineWorker.onmessage = function (event) {
     if (version !== analyzeVersion) return;
 
     document.getElementById("bestmove").textContent = result.bestMove ?? "--";
+    document.getElementById("score").textContent = result.scoreCp ?? "--";
     document.getElementById("pv").textContent = result.pv ?? "--";
 };
 
