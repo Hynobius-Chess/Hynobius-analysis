@@ -68,18 +68,38 @@ function updateBoard() {
     document.getElementById("fen").textContent = game.fen();
 }
 
-// 🔥 這裡是未來接引擎的地方
 function analyze() {
-    const fen = game.fen();
+  if (!window.wasmReady) {
+    console.error("WASM not ready yet");
+    return;
+  }
 
-    // ===== 暫時假資料 =====
-    document.getElementById("score").textContent = "+0.34";
-    document.getElementById("bestmove").textContent = "e2e4";
-    document.getElementById("pv").textContent = "e2e4 e7e5 g1f3";
+  const fen = game.fen();
 
-    // ===== 未來你要做的 =====
-    // let result = engine.analyze(fen, depth=10);
-    // document.getElementById("score").textContent = result.score;
-    // document.getElementById("bestmove").textContent = result.bestmove;
-    // document.getElementById("pv").textContent = result.pv;
+  const ok = Module.ccall(
+    'web_set_fen',
+    'number',
+    ['string'],
+    [fen]
+  );
+
+  if (!ok) {
+    console.error("set fen failed");
+    return;
+  }
+
+  const jsonStr = Module.ccall(
+    'web_analyze_depth',
+    'string',
+    ['number'],
+    [6]
+  );
+
+  const result = JSON.parse(jsonStr);
+
+  document.getElementById("bestmove").textContent = result.bestMove ?? "--";
+  document.getElementById("score").textContent =
+    result.scoreCp !== undefined ? result.scoreCp : "--";
+
+  console.log(result);
 }
