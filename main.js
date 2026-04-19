@@ -128,7 +128,7 @@ function analyze() {
         engineWorker.postMessage({
         type: "analyze",
         fen,
-        depth: 4,
+        depth: 6,
         version
         });
     }, 120);
