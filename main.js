@@ -76,6 +76,8 @@ function analyze() {
 
   const fen = game.fen();
 
+  console.log(fen);
+
   const ok = Module.ccall(
     'web_set_fen',
     'number',
@@ -86,13 +88,15 @@ function analyze() {
   if (!ok) {
     console.error("set fen failed");
     return;
+  } else {
+    console.log("set fen succeed")
   }
 
   const jsonStr = Module.ccall(
     'web_analyze_depth',
     'string',
     ['number'],
-    [6]
+    [1]
   );
 
   const result = JSON.parse(jsonStr);
