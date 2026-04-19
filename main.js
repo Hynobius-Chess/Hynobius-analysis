@@ -46,21 +46,21 @@ function renderMoves() {
 
 // Prev / Next move by arrow keys
 document.addEventListener("keydown", function (event) {
-  const tag = document.activeElement.tagName;
+    const tag = document.activeElement.tagName;
 
-  if (tag === "TEXTAREA" || tag === "INPUT") {
-    return;
-  }
+    if (tag === "TEXTAREA" || tag === "INPUT") {
+        return;
+    }
 
-  if (event.key === "ArrowLeft") {
-    event.preventDefault();
-    prevMove();
-  }
+    if (event.key === "ArrowLeft") {
+        event.preventDefault();
+        prevMove();
+    }
 
-  if (event.key === "ArrowRight") {
-    event.preventDefault();
-    nextMove();
-  }
+    if (event.key === "ArrowRight") {
+        event.preventDefault();
+        nextMove();
+    }
 });
 
 // 前一步
@@ -89,52 +89,46 @@ function updateBoard() {
     document.getElementById("fen").textContent = game.fen();
 }
 
-function analyze() {
-  if (!window.wasmReady) {
-    console.error("WASM not ready yet");
-    return;
-  }
+const engineWorker = new Worker("engine-worker.js");
 
-  const fen = game.fen();
-
-  console.log(fen);
-
-  const ok = Module.ccall(
-    'web_set_fen',
-    'number',
-    ['string'],
-    [fen]
-  );
-
-  if (!ok) {
-    console.error("set fen failed");
-    return;
-  } else {
-    console.log("set fen succeed")
-  }
-
-  const jsonStr = Module.ccall(
-    'web_analyze_depth',
-    'string',
-    ['number'],
-    [4]
-  );
-
-  const result = JSON.parse(jsonStr);
-
-  document.getElementById("bestmove").textContent = result.bestMove ?? "--";
-  document.getElementById("score").textContent =
-    result.scoreCp !== undefined ? result.scoreCp : "--";
-
-  console.log(result);
-}
-
-// Analyze schedule
+let workerReady = false;
+let analyzeVersion = 0;
 let analyzeTimer = null;
 
-function scheduleAnalyze() {
-  clearTimeout(analyzeTimer);
-  analyzeTimer = setTimeout(() => {
-    analyze();
-  }, 100);
+engineWorker.onmessage = function (event) {
+    const data = event.data;
+
+    if (data.type === "ready") {
+        workerReady = true;
+        console.log("worker wasm ready");
+        return;
+    }
+
+    const { version, result } = data;
+
+    if (version !== analyzeVersion) return;
+
+    document.getElementById("bestmove").textContent = result.bestMove ?? "--";
+    document.getElementById("pv").textContent = result.pv ?? "--";
+};
+
+function analyze() {
+    if (!window.wasmReady) {
+        console.error("WASM not ready yet");
+        return;
+    }
+
+    clearTimeout(analyzeTimer);
+
+    const fen = game.fen();
+    const version = ++analyzeVersion;
+
+    analyzeTimer = setTimeout(() => {
+        engineWorker.postMessage({
+        type: "analyze",
+        fen,
+        depth: 4,
+        version
+        });
+    }, 120);
 }
