@@ -131,5 +131,5 @@ function analyze() {
         depth: 6,
         version
         });
-    }, 120);
+    }, 300);
 }
