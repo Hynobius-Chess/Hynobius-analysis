@@ -44,6 +44,25 @@ function renderMoves() {
     document.getElementById("moves").innerHTML = html;
 }
 
+// Prev / Next move by arrow keys
+document.addEventListener("keydown", function (event) {
+  const tag = document.activeElement.tagName;
+
+  if (tag === "TEXTAREA" || tag === "INPUT") {
+    return;
+  }
+
+  if (event.key === "ArrowLeft") {
+    event.preventDefault();
+    prevMove();
+  }
+
+  if (event.key === "ArrowRight") {
+    event.preventDefault();
+    nextMove();
+  }
+});
+
 // 前一步
 function prevMove() {
     if (currentMove === 0) return;
@@ -51,6 +70,7 @@ function prevMove() {
     game.undo();
     currentMove--;
     updateBoard();
+    analyze();
 }
 
 // 下一步
@@ -60,6 +80,7 @@ function nextMove() {
     game.move(moves[currentMove]);
     currentMove++;
     updateBoard();
+    analyze();
 }
 
 // 更新棋盤 + FEN
@@ -96,7 +117,7 @@ function analyze() {
     'web_analyze_depth',
     'string',
     ['number'],
-    [1]
+    [4]
   );
 
   const result = JSON.parse(jsonStr);
@@ -106,4 +127,14 @@ function analyze() {
     result.scoreCp !== undefined ? result.scoreCp : "--";
 
   console.log(result);
+}
+
+// Analyze schedule
+let analyzeTimer = null;
+
+function scheduleAnalyze() {
+  clearTimeout(analyzeTimer);
+  analyzeTimer = setTimeout(() => {
+    analyze();
+  }, 100);
 }
